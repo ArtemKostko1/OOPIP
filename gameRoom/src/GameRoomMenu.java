@@ -1,11 +1,11 @@
 import java.util.Scanner;
+import utils.MenuUtils;
 
 public class GameRoomMenu {
-    private Scanner scanner;
+    private static Scanner scanner = new Scanner(System.in);
     private GameRoom gameRoom; // добавляем поле для GameRoom
 
     public GameRoomMenu() {
-        this.scanner = new Scanner(System.in);
         this.gameRoom = new GameRoom();
     }
 
@@ -20,17 +20,17 @@ public class GameRoomMenu {
             System.out.println("0. Выход");
             System.out.println("--------------------------------------------------");
 
-            int choice = scanner.nextInt();
+            int menuChoice = MenuUtils.getValidMenuChoice(new int[]{0, 1, 2, 3, 4});
 
-            switch (choice) {
+            switch (menuChoice) {
                 case 1:
-                    gameRoom.addToy(scanner);
+                    gameRoom.addToy();
                     break;
                 case 2:
                     gameRoom.sortToys();
                     break;
                 case 3:
-                    gameRoom.findToysByName(scanner);
+                    gameRoom.findToysByName();
                     break;
                 case 4:
                     gameRoom.printAllToys();

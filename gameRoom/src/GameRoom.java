@@ -1,15 +1,17 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import utils.MenuUtils;
 
 public class GameRoom {
+    private static Scanner scanner = new Scanner(System.in);
     private List<Toy> toys;
 
     public GameRoom() {
         this.toys = new ArrayList<>();
     }
 
-    public void addToy(Scanner scanner) {
+    public void addToy() {
         System.out.println("Выберите тип игрушки: ");
         System.out.println("--------------------------------------------------");
         System.out.println("1. Машина");
@@ -18,20 +20,17 @@ public class GameRoom {
         System.out.println("4. Кубик");
         System.out.println("--------------------------------------------------");
 
-        int toyType = scanner.nextInt();
+        int toyTypeChoice = MenuUtils.getValidMenuChoice(new int[]{1, 2, 3, 4});
 
-        System.out.println("Введите имя игрушки:");
-        String name = scanner.next();
+        String name = getValidStringInput("Введите имя игрушки:");
 
-        System.out.println("Введите цену игрушки:");
-        double price = scanner.nextDouble();
+        double price = getValidDoubleInput("Введите цену игрушки:");
 
-        System.out.println("Введите возрастную группу игрушки:");
-        int ageGroup = scanner.nextInt();
+        int ageGroup = getValidIntInput("Введите возрастную группу игрушки:");
 
         Toy toy = null;
 
-        switch (toyType) {
+        switch (toyTypeChoice) {
             case 1:
                 Car.CarSize size;
                 while (true) {
@@ -41,9 +40,10 @@ public class GameRoom {
                     System.out.println("2. Средняя");
                     System.out.println("3. Маленькая");
                     System.out.println("--------------------------------------------------");
-                    int sizeChoice = scanner.nextInt();
 
-                    switch (sizeChoice) {
+                    int carSizeChoice = MenuUtils.getValidMenuChoice(new int[]{1, 2, 3});
+
+                    switch (carSizeChoice) {
                         case 1:
                             size = Car.CarSize.LARGE;
                             break;
@@ -81,7 +81,7 @@ public class GameRoom {
         System.out.println("Сортировка игрушек...");
     }
 
-    public void findToysByName(Scanner scanner) {
+    public void findToysByName() {
         System.out.println("Введите имя игрушки:");
         String name = scanner.next();
 
@@ -100,5 +100,47 @@ public class GameRoom {
         for (Toy toy : toys) {
             System.out.println(toy.toString());
         }
+    }
+
+    private String getValidStringInput(String prompt) {
+        String name;
+        while (true) {
+            System.out.println(prompt);
+            name = scanner.nextLine();
+            if (!name.trim().isEmpty()) {
+                break;
+            } else {
+                System.out.println("Некорректный ввод. Имя не должно быть пустым. Пожалуйста, введите имя еще раз.");
+            }
+        }
+        return name;
+    }
+
+    private double getValidDoubleInput(String prompt) {
+        double value = -1;
+        while (true) {
+            System.out.println(prompt);
+            try {
+                value = Double.parseDouble(scanner.nextLine());
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println("Некорректный ввод. Пожалуйста, введите числовое значение.");
+            }
+        }
+        return value;
+    }
+
+    private int getValidIntInput(String prompt) {
+        int value = -1;
+        while (true) {
+            System.out.println(prompt);
+            try {
+                value = Integer.parseInt(scanner.nextLine());
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println("Некорректный ввод. Пожалуйста, введите целочисленное значение.");
+            }
+        }
+        return value;
     }
 }
