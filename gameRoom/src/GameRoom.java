@@ -1,166 +1,161 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import utils.MenuUtils;
 import utils.CustomException;
+import java.util.stream.Collectors;
 
 public class GameRoom {
-    private static Scanner scanner = new Scanner(System.in);
     private List<Toy> toys;
     private double budget;
     private int limitToysNumber;
 
     public GameRoom() {
         this.toys = new ArrayList<>();
-        this.budget = 0.0;
+        this.budget = 2500.0;
         this.limitToysNumber = 7;
     }
 
-    public GameRoom(List<Toy> toys) {
-        this.toys = toys != null ? toys : new ArrayList<>();
-        this.budget = 0.0;
-        this.limitToysNumber = 7;
+    public GameRoom(GameRoomData data) {
+        this.toys = data.getToys() != null ? data.getToys() : new ArrayList<>();
+        this.budget = data.getBudget();
+        this.limitToysNumber = data.getLimitToysNumber();
     }
 
     public void addToy() {
-        while (true) {
-            try {
-                if (limitToysNumber == 0) {
-                    throw new CustomException("Достигнут лимит количества игрушек в комнате");
-                }
+        try {
+            if (limitToysNumber == 0) {
+                throw new CustomException("Достигнут лимит количества игрушек в комнате");
+            }
 
-                System.out.println("Выберите тип игрушки: ");
-                System.out.println("--------------------------------------------------");
-                System.out.println("Бюджет: " + budget);
-                System.out.println("Лимит игрушек: " + limitToysNumber);
-                System.out.println("--------------------------------------------------");
-                System.out.println("1. Машина");
-                System.out.println("2. Кукла");
-                System.out.println("3. Мяч");
-                System.out.println("4. Кубик");
-                System.out.println("0. Выход");
-                System.out.println("--------------------------------------------------");
+            System.out.println("--------------------------------------------------");
+            System.out.println("Выберите тип игрушки: ");
+            System.out.println("--------------------------------------------------");
+            System.out.println("Бюджет: " + budget);
+            System.out.println("Лимит игрушек: " + limitToysNumber);
+            System.out.println("*************************");
+            System.out.println("1. Машина");
+            System.out.println("2. Кукла");
+            System.out.println("3. Мяч");
+            System.out.println("4. Кубик");
+            System.out.println("0. Выход");
+            System.out.println("*************************");
 
-                int toyTypeChoice = MenuUtils.getValidMenuChoice(new int[]{0, 1, 2, 3, 4});
+            int toyTypeChoice = MenuUtils.getValidMenuChoice(new int[]{0, 1, 2, 3, 4});
 
-                if (toyTypeChoice == 0) {
-                    return; // Выход в главное меню
-                }
+            if (toyTypeChoice == 0) return; // Выход в главное меню
 
-                String name = MenuUtils.getValidStringInput("Введите имя игрушки:");
+            System.out.println("--------------------------------------------------");
 
-                double price = MenuUtils.getValidDoubleInput("Введите цену игрушки:");
+            String name = MenuUtils.getValidStringInput("Введите имя игрушки: ");
 
-                if (price > budget) {
-                    throw new CustomException("Недостаточно бюджета для покупки этой игрушки. Остаток бюджета: " + budget);
-                }
+            double price = MenuUtils.getValidDoubleInput("Введите цену игрушки: ");
 
-                int ageGroup = MenuUtils.getValidIntInput("Введите возрастную группу игрушки:");
+            if (price > budget) {
+                throw new CustomException("Недостаточно бюджета для покупки этой игрушки. Остаток бюджета: " + budget);
+            }
 
-                Toy toy = null;
+            int ageGroup = MenuUtils.getValidIntInput("Введите возрастную группу игрушки: ");
 
-                switch (toyTypeChoice) {
-                    case 1:
-                        Car.CarSize size;
-                        while (true) {
-                            System.out.println("Выберите размер машины:");
-                            System.out.println("--------------------------------------------------");
-                            System.out.println("1. Большая");
-                            System.out.println("2. Средняя");
-                            System.out.println("3. Маленькая");
-                            System.out.println("--------------------------------------------------");
+            Toy toy = createToy(toyTypeChoice, name, price, ageGroup);
 
-                            int carSizeChoice = MenuUtils.getValidMenuChoice(new int[]{1, 2, 3});
-
-                            switch (carSizeChoice) {
-                                case 1:
-                                    size = Car.CarSize.LARGE;
-                                    break;
-                                case 2:
-                                    size = Car.CarSize.MEDIUM;
-                                    break;
-                                case 3:
-                                    size = Car.CarSize.SMALL;
-                                    break;
-                                default:
-                                    System.out.println("Некорректный ввод. Пожалуйста, выберите снова:");
-                                    continue;
-                            }
-                            break;
-                        }
-                        toy = new Car(name, price, ageGroup, size);
-                        break;
-                    case 2:
-                        toy = new Doll(name, price, ageGroup);
-                        break;
-                    case 3:
-                        toy = new Ball(name, price, ageGroup);
-                        break;
-                    case 4:
-                        toy = new Cube(name, price, ageGroup);
-                        break;
-                    case 0:
-                        break;
-                }
-
+            if (toy != null) {
                 toys.add(toy);
                 budget -= price;
                 limitToysNumber--;
+                System.out.println("--------------------------------------------------");
+                System.out.println("!------------------------!");
                 System.out.println("Игрушка добавлена!");
-            } catch (CustomException e) {
-                System.out.println("!................................................!");
-                System.out.println(e.getMessage());
-                System.out.println("!................................................!");
-                return; // Выход в главное меню
+                System.out.println("!------------------------!");
+                System.out.println("--------------------------------------------------");
             }
+        } catch (CustomException e) {
+            System.out.println("--------------------------------------------------");
+            System.out.println("!------------------------!");
+            System.out.println(e.getMessage());
+            System.out.println("!------------------------!");
+            System.out.println("--------------------------------------------------");
         }
     }
 
-    public void setBudget() {
-        this.budget = MenuUtils.getValidDoubleInput("Введите бюджет на закупку игрушек:");
+    private Toy createToy(int toyTypeChoice, String name, double price, int ageGroup) {
+        switch (toyTypeChoice) {
+            case 1:
+                Car.CarSize size = selectCarSize();
+                return new Car(name, price, ageGroup, size);
+            case 2:
+                return new Doll(name, price, ageGroup);
+            case 3:
+                return new Ball(name, price, ageGroup);
+            case 4:
+                return new Cube(name, price, ageGroup);
+            default:
+                return null;
+        }
     }
 
-    public double getBudget() {
-        return this.budget;
-    }
+    private Car.CarSize selectCarSize() {
+        System.out.println("Выберите размер машины:");
+        System.out.println("*************************");
+        System.out.println("1. Большая");
+        System.out.println("2. Средняя");
+        System.out.println("3. Маленькая");
+        System.out.println("*************************");
 
-    public List<Toy> getToys() {
-        return this.toys;
+        int carSizeChoice = MenuUtils.getValidMenuChoice(new int[]{1, 2, 3});
+        System.out.println("--------------------------------------------------");
+        switch (carSizeChoice) {
+            case 1:
+                return Car.CarSize.LARGE;
+            case 2:
+                return Car.CarSize.MEDIUM;
+            case 3:
+                return Car.CarSize.SMALL;
+            default:
+                throw new IllegalArgumentException("Некорректный выбор размера машины");
+        }
     }
 
     public void sortToys() {
         toys.sort((t1, t2) -> t1.getName().compareTo(t2.getName()));
-        System.out.println("Сортировка игрушек...");
+        System.out.println("--------------------------------------------------");
+        System.out.println("!------------------------!");
+        System.out.println("Сортировка игрушек выполнена");
+        System.out.println("!------------------------!");
+        System.out.println("--------------------------------------------------");
     }
 
     public void findToysByAgeGroup() {
-        int ageGroup = MenuUtils.getValidIntInput("Введите возрастную группу игрушки:");
+        int ageGroup = MenuUtils.getValidIntInput("Введите возрастную группу игрушки: ");
+        System.out.println("--------------------------------------------------");
 
-        System.out.println("..................................................");
-        System.out.println("Найденные игрушки");
+        // Используем временную коллекцию для хранения найденных игрушек
+        List<Toy> foundToys = toys.stream()
+                .filter(toy -> toy.getAgeGroup() == ageGroup)
+                .collect(Collectors.toList());
 
-        boolean found = false;
-        for (Toy toy : toys) {
-            if (toy.getAgeGroup() == ageGroup) {
-                System.out.println(toy.toString());
-                found = true;
-            }
+        if (!foundToys.isEmpty()) {
+            System.out.println("Найденные игрушки:");
+            System.out.println("*************************");
+            foundToys.forEach(System.out::println);
+            System.out.println("*************************");
+        } else {
+            System.out.println("!------------------------!");
+            System.out.println("Игрушки с указанной возрастной группой не найдены");
+            System.out.println("!------------------------!");
         }
-
-        System.out.println("..................................................");
-
-        if (!found) {
-            System.out.println("Игрушки с указанной возрастной группой не найдены.");
-            System.out.println("..................................................");
-        }
+        System.out.println("--------------------------------------------------");
     }
 
     public void printAllToys() {
         System.out.println("--------------------------------------------------");
         System.out.println("Все игрушки:");
-        for (Toy toy : toys) {
-            System.out.println(toy.toString());
-        }
+        System.out.println("*************************");
+        toys.forEach(toy -> System.out.println(toy.toString()));
+        System.out.println("*************************");
         System.out.println("--------------------------------------------------");
+    }
+
+    public GameRoomData getGameRoomData() {
+        return new GameRoomData(toys, budget, limitToysNumber);
     }
 }

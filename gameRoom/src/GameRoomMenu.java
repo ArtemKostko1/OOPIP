@@ -1,28 +1,27 @@
-import java.util.Scanner;
 import utils.MenuUtils;
 
 public class GameRoomMenu {
-    private static Scanner scanner = new Scanner(System.in);
-    private GameRoom gameRoom; // добавляем поле для GameRoom
+    private final GameRoom gameRoom;
 
     public GameRoomMenu(GameRoom gameRoom) {
-        this.gameRoom = new GameRoom();
+        this.gameRoom = gameRoom;
     }
 
     public void showMenu() {
-        gameRoom.setBudget();
-
         while (true) {
-            System.out.println("Главное меню:");
             System.out.println("--------------------------------------------------");
+            System.out.println("Главное меню:");
+            System.out.println("*************************");
             System.out.println("1. Добавить игрушку");
             System.out.println("2. Сортировать игрушки");
             System.out.println("3. Найти игрушки в диапазоне параметров");
             System.out.println("4. Вывести все игрушки");
             System.out.println("0. Выход");
-            System.out.println("--------------------------------------------------");
+            System.out.println("*************************");
 
             int menuChoice = MenuUtils.getValidMenuChoice(new int[]{0, 1, 2, 3, 4});
+
+            System.out.println("--------------------------------------------------");
 
             switch (menuChoice) {
                 case 1:

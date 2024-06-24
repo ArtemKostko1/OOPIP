@@ -2,18 +2,18 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        List<Toy> toys = FileService.loadToys();
+        GameRoomData data = FileService.loadGameRoomData();
 
         GameRoom gameRoom;
-        if (toys == null) {
+        if (data == null) {
             gameRoom = new GameRoom();
         } else {
-            gameRoom = new GameRoom(toys);
+            gameRoom = new GameRoom(data);
         }
 
         GameRoomMenu menu = new GameRoomMenu(gameRoom);
         menu.showMenu();
 
-        FileService.saveToys(gameRoom.getToys());
+        FileService.saveGameRoomData(gameRoom.getGameRoomData());
     }
 }

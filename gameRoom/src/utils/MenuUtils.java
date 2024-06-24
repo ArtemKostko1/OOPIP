@@ -49,12 +49,12 @@ public class MenuUtils {
     public static String getValidStringInput(String prompt) {
         String name;
         while (true) {
-            System.out.println(prompt);
+            System.out.print(prompt);
             name = scanner.nextLine();
             if (!name.trim().isEmpty()) {
                 break;
             } else {
-                System.out.println("Некорректный ввод. Имя не должно быть пустым. Пожалуйста, введите имя еще раз.");
+                System.out.println("Некорректный ввод. Имя не должно быть пустым. Пожалуйста, введите имя еще раз");
             }
         }
         return name;
@@ -63,12 +63,16 @@ public class MenuUtils {
     public static double getValidDoubleInput(String prompt) {
         double value = -1;
         while (true) {
-            System.out.println(prompt);
+            System.out.print(prompt);
             try {
                 value = Double.parseDouble(scanner.nextLine());
-                break;
+                if (value > 0) {
+                    break;
+                } else {
+                    System.out.println("Пожалуйста, введите положительное числовое значение");
+                }
             } catch (NumberFormatException e) {
-                System.out.println("Некорректный ввод. Пожалуйста, введите числовое значение.");
+                System.out.println("Некорректный ввод. Пожалуйста, введите числовое значение");
             }
         }
         return value;
@@ -77,12 +81,17 @@ public class MenuUtils {
     public static int getValidIntInput(String prompt) {
         int value = -1;
         while (true) {
-            System.out.println(prompt);
+            System.out.print(prompt);
             try {
                 value = Integer.parseInt(scanner.nextLine());
-                break;
+                if (value > 0) {
+                    System.out.println("--------------------------------------------------");
+                    break;
+                } else {
+                    System.out.println("Пожалуйста, введите положительное целочисленное значение");
+                }
             } catch (NumberFormatException e) {
-                System.out.println("Некорректный ввод. Пожалуйста, введите целочисленное значение.");
+                System.out.println("Некорректный ввод. Пожалуйста, введите целочисленное значение");
             }
         }
         return value;
