@@ -45,4 +45,46 @@ public class MenuUtils {
         }
         return formatted.toString();
     }
+
+    public static String getValidStringInput(String prompt) {
+        String name;
+        while (true) {
+            System.out.println(prompt);
+            name = scanner.nextLine();
+            if (!name.trim().isEmpty()) {
+                break;
+            } else {
+                System.out.println("Некорректный ввод. Имя не должно быть пустым. Пожалуйста, введите имя еще раз.");
+            }
+        }
+        return name;
+    }
+
+    public static double getValidDoubleInput(String prompt) {
+        double value = -1;
+        while (true) {
+            System.out.println(prompt);
+            try {
+                value = Double.parseDouble(scanner.nextLine());
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println("Некорректный ввод. Пожалуйста, введите числовое значение.");
+            }
+        }
+        return value;
+    }
+
+    public static int getValidIntInput(String prompt) {
+        int value = -1;
+        while (true) {
+            System.out.println(prompt);
+            try {
+                value = Integer.parseInt(scanner.nextLine());
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println("Некорректный ввод. Пожалуйста, введите целочисленное значение.");
+            }
+        }
+        return value;
+    }
 }

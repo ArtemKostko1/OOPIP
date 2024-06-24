@@ -1,4 +1,7 @@
-public class Car extends Toy {
+import java.io.Serializable;
+
+public class Car extends Toy implements Serializable {
+    private static final long serialVersionUID = 1L;
     private CarSize size;
 
     public enum CarSize {

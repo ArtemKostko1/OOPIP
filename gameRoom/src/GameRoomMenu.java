@@ -5,11 +5,13 @@ public class GameRoomMenu {
     private static Scanner scanner = new Scanner(System.in);
     private GameRoom gameRoom; // добавляем поле для GameRoom
 
-    public GameRoomMenu() {
+    public GameRoomMenu(GameRoom gameRoom) {
         this.gameRoom = new GameRoom();
     }
 
     public void showMenu() {
+        gameRoom.setBudget();
+
         while (true) {
             System.out.println("Главное меню:");
             System.out.println("--------------------------------------------------");
@@ -30,7 +32,7 @@ public class GameRoomMenu {
                     gameRoom.sortToys();
                     break;
                 case 3:
-                    gameRoom.findToysByName();
+                    gameRoom.findToysByAgeGroup();
                     break;
                 case 4:
                     gameRoom.printAllToys();

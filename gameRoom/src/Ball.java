@@ -1,9 +1,9 @@
 import java.io.Serializable;
 
-public class Doll extends Toy implements Serializable {
+public class Ball extends Toy implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    public Doll(String name, double price, int ageGroup) {
+    public Ball(String name, double price, int ageGroup) {
         super(name, price, ageGroup);
     }
 }

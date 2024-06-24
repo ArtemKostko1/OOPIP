@@ -1,6 +1,7 @@
-import java.util.Objects;
+import java.io.Serializable;
 
-public abstract class Toy {
+public abstract class Toy implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String name;
     private double price;
     private int ageGroup;
@@ -38,18 +39,5 @@ public abstract class Toy {
     @Override
     public String toString() {
         return "Игрушка: " + name + ", цена: " + price + ", возрастная группа: " + ageGroup;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Toy toy = (Toy) obj;
-        return ageGroup == toy.ageGroup && Double.compare(toy.price, price) == 0 && Objects.equals(name, toy.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, price, ageGroup);
     }
 }
