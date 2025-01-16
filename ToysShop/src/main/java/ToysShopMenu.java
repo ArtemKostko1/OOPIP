@@ -32,7 +32,7 @@ public class ToysShopMenu {
                     System.out.println("Конец работы программы");
                     return;
                 default:
-                    System.out.println("Неверный выбор. Попробуйте снова.");
+                    break;
             }
         }
     }
