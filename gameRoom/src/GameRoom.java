@@ -12,7 +12,7 @@ public class GameRoom {
     public GameRoom() {
         this.toys = new ArrayList<>();
         this.budget = 2500.0;
-        this.limitToysNumber = 7;
+        this.limitToysNumber = 5;
     }
 
     public GameRoom(GameRoomData data) {
@@ -116,12 +116,20 @@ public class GameRoom {
     }
 
     public void sortToys() {
-        toys.sort((t1, t2) -> t1.getName().compareTo(t2.getName()));
-        System.out.println("--------------------------------------------------");
-        System.out.println("!------------------------!");
-        System.out.println("Сортировка игрушек выполнена");
-        System.out.println("!------------------------!");
-        System.out.println("--------------------------------------------------");
+        if (!toys.isEmpty()) {
+            toys.sort((t1, t2) -> t1.getName().compareTo(t2.getName()));
+            System.out.println("--------------------------------------------------");
+            System.out.println("!------------------------!");
+            System.out.println("Сортировка игрушек выполнена");
+            System.out.println("!------------------------!");
+            System.out.println("--------------------------------------------------");
+        } else {
+            System.out.println("--------------------------------------------------");
+            System.out.println("!------------------------!");
+            System.out.println("Сортировка невозможна, игрушки для комнаты отсутствуют");
+            System.out.println("!------------------------!");
+            System.out.println("--------------------------------------------------");
+        }
     }
 
     public void findToysByAgeGroup() {
@@ -147,12 +155,20 @@ public class GameRoom {
     }
 
     public void printAllToys() {
+        if (!toys.isEmpty()) {
         System.out.println("--------------------------------------------------");
         System.out.println("Все игрушки:");
         System.out.println("*************************");
         toys.forEach(toy -> System.out.println(toy.toString()));
         System.out.println("*************************");
         System.out.println("--------------------------------------------------");
+        } else {
+            System.out.println("--------------------------------------------------");
+            System.out.println("!------------------------!");
+            System.out.println("Игрушки для комнаты отсутствуют");
+            System.out.println("!------------------------!");
+            System.out.println("--------------------------------------------------");
+        }
     }
 
     public GameRoomData getGameRoomData() {

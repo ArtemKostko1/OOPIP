@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Comparator;
 import utils.MenuUtils;
 import java.util.stream.Collectors;
 
@@ -8,6 +9,7 @@ public class ToysShop {
     private final ToysShopData toysShopData;
     private String sizeFilter = null; // Фильтр по размеру
     private String categoryFilter = null; // Фильтр по категории
+    private List<Toy> filteredToys; // Хранение отфильтрованных данных
 
     // Массив категорий для фильтрации
     private static final String[] categories = {
@@ -20,6 +22,7 @@ public class ToysShop {
 
     public ToysShop(ToysShopData toysShopData) {
         this.toysShopData = toysShopData;
+        this.filteredToys = new ArrayList<>(toysShopData.getToys());
     }
 
     public ToysShopData getToysShopData() {
@@ -29,23 +32,26 @@ public class ToysShop {
     public void printAllToys() {
         Scanner scanner = new Scanner(System.in);
 
-        displayAllToys();
-
         while (true) {
+            displayAllToys(filteredToys);
             System.out.println("*************************");
             System.out.println("Меню:");
             System.out.println("1. Фильтры");
-            System.out.println("2. Добавить в корзину");
+            System.out.println("2. Сортировка");
+            System.out.println("3. Добавить в корзину");
             System.out.println("0. Вернуться в главное меню");
             System.out.println("*************************");
 
-            int choice = MenuUtils.getValidMenuChoice(new int[]{0, 1, 2});
+            int choice = MenuUtils.getValidMenuChoice(new int[]{0, 1, 2, 3});
 
             switch (choice) {
                 case 1:
-                    showFiltersMenu(); // Показываем все игрушки с учетом фильтров
+                    showFiltersMenu();
                     break;
                 case 2:
+                    showSortMenu();
+                    break;
+                case 3:
                     System.out.print("Введите номер игрушки для добавления в корзину: ");
                     int id = scanner.nextInt();
                     addToCart(id);
@@ -58,24 +64,8 @@ public class ToysShop {
         }
     }
 
-    // Метод для отображения всех игрушек, с учетом фильтров
-    private void displayAllToys() {
-        List<Toy> toysToDisplay = new ArrayList<>(toysShopData.getToys());
-
-        // Применяем фильтры (если они есть)
-        if (sizeFilter != null) {
-            toysToDisplay = toysToDisplay.stream()
-                    .filter(toy -> toy.getSize().equalsIgnoreCase(sizeFilter))
-                    .collect(Collectors.toList());
-        }
-
-        if (categoryFilter != null) {
-            toysToDisplay = toysToDisplay.stream()
-                    .filter(toy -> toy.getCategory().equalsIgnoreCase(categoryFilter))
-                    .collect(Collectors.toList());
-        }
-
-        // Выводим все игрушки или отфильтрованные игрушки
+    // Общий метод для отображения каталога
+    private void displayAllToys(List<Toy> toysToDisplay) {
         System.out.println("--------------------------------------------------");
         System.out.println("Каталог игрушек:");
         System.out.println("*************************");
@@ -94,6 +84,7 @@ public class ToysShop {
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
+            displayAllToys(filteredToys);
             System.out.println("*************************");
             System.out.println("Меню фильтров:");
             System.out.println("1. Добавить фильтрацию по размеру");
@@ -115,8 +106,41 @@ public class ToysShop {
                     resetFilters();
                     break;
                 case 0:
-                    displayAllToys();
-                    return; // Возвращаемся в главное меню каталога
+                    filteredToys = applyFilters(toysShopData.getToys());
+                    return;
+                default:
+                    break;
+            }
+        }
+    }
+
+    // Метод отображения подменю сортировки
+    private void showSortMenu() {
+        while (true) {
+            displayAllToys(filteredToys);
+            System.out.println("*************************");
+            System.out.println("Меню сортировки:");
+            System.out.println("1. По возрастанию цены");
+            System.out.println("2. По убыванию цены");
+            System.out.println("3. Сброс сортировки");
+            System.out.println("0. Отмена");
+            System.out.println("*************************");
+
+            int choice = MenuUtils.getValidMenuChoice(new int[]{0, 1, 2, 3});
+
+            switch (choice) {
+                case 1:
+                    sortAscending();
+                    break;
+                case 2:
+                    sortDescending();
+                    break;
+                case 3:
+                    filteredToys = applyFilters(toysShopData.getToys());
+                    System.out.println("Сортировка сброшена.");
+                    break;
+                case 0:
+                    return;
                 default:
                     break;
             }
@@ -151,13 +175,12 @@ public class ToysShop {
                     sizeFilter = null; // Сброс фильтрации
                     System.out.println("Фильтрация по размеру сброшена.");
                 }
-
                 break;
             default:
                 break;
         }
 
-        displayAllToys();
+        filteredToys = applyFilters(toysShopData.getToys());
     }
 
     // Метод фильтрации по категории
@@ -182,16 +205,14 @@ public class ToysShop {
         int categoryChoice = MenuUtils.getValidMenuChoice(validChoices);
 
         if (categoryChoice == 0) {
-            if (categoryFilter != null) {
-                categoryFilter = null;
-                System.out.println("Фильтрация по категории сброшена.");
-            }
-            displayAllToys();
+            categoryFilter = null; // Сброс фильтрации
+            System.out.println("Фильтрация по категории сброшена.");
         } else {
-            // Устанавливаем выбранную категорию как фильтр
             categoryFilter = categories[categoryChoice - 1];
-            displayAllToys();
         }
+
+        // Применяем фильтры после изменения
+        filteredToys = applyFilters(toysShopData.getToys());
     }
 
     // Метод сброса фильтров
@@ -200,7 +221,58 @@ public class ToysShop {
         categoryFilter = null;
         System.out.println("Фильтры сброшены.");
 
-        displayAllToys();
+        displayAllToys(filteredToys);
+    }
+
+    // Сортировка по возрастанию (Runnable)
+    private void sortAscending() {
+        Runnable sortTask = () -> {
+            filteredToys = filteredToys.stream()
+                    .sorted(Comparator.comparingDouble(Toy::getPrice))
+                    .collect(Collectors.toList());
+            System.out.println("Сортировка по возрастанию завершена.");
+            displayAllToys(filteredToys);
+        };
+        Thread thread = new Thread(sortTask);
+        thread.start();
+        try {
+            thread.join(); // Ждём завершения потока
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Сортировка по убыванию (Thread)
+    private void sortDescending() {
+        Thread sortThread = new Thread(() -> {
+            filteredToys = filteredToys.stream()
+                    .sorted(Comparator.comparingDouble(Toy::getPrice).reversed())
+                    .collect(Collectors.toList());
+            System.out.println("Сортировка по убыванию завершена.");
+            displayAllToys(filteredToys);
+        });
+        sortThread.start();
+        try {
+            sortThread.join(); // Ждём завершения потока
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Применение фильтров к игрушкам
+    private List<Toy> applyFilters(List<Toy> toys) {
+        List<Toy> filtered = new ArrayList<>(toys);
+        if (sizeFilter != null) {
+            filtered = filtered.stream()
+                    .filter(toy -> toy.getSize().equalsIgnoreCase(sizeFilter))
+                    .collect(Collectors.toList());
+        }
+        if (categoryFilter != null) {
+            filtered = filtered.stream()
+                    .filter(toy -> toy.getCategory().equalsIgnoreCase(categoryFilter))
+                    .collect(Collectors.toList());
+        }
+        return filtered;
     }
 
     // Метод добавления игрушки в корзину
@@ -241,7 +313,7 @@ public class ToysShop {
             System.out.println("Игрушка указанным номером не найдена.");
         }
 
-        displayAllToys();
+        displayAllToys(filteredToys);
     }
 
     // Метод вывода списка игрушек в корзине
